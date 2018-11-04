@@ -21,8 +21,8 @@ render() {
             <LinkContainer to="/employee">
               <NavItem>Employee</NavItem>
             </LinkContainer>
-						<LinkContainer to="/signup">
-							<NavItem>Signup</NavItem>
+						<LinkContainer to="/register">
+							<NavItem>Register</NavItem>
 						</LinkContainer>
 						<LinkContainer to="/login">
 							<NavItem href="/login">Login</NavItem>

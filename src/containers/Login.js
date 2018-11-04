@@ -73,7 +73,7 @@ export default class Login extends Component {
   render() {
     const { redirect } = this.state;
 
-    if (redirect ) {
+    if (redirect) {
       return <Redirect to='/employee'/ >;
     }
 

@@ -5,6 +5,7 @@ import Home from "./containers/Home";
 import Employee from "./containers/Employee";
 import Login from "./containers/Login";
 import NotFound from "./containers/NotFound";
+import Register from "./containers/Register";
 
 const cookies = new Cookies();
 
@@ -20,6 +21,7 @@ export default () =>
   <Switch>
     <Route path="/" exact component={Home}/>
 		<Route path="/login" exact component={Login} />
+    <Route path="/register" exact component={Register} />
     <Route path="/employee" exact render={() => (
       isEmployee() ? (
         <Employee />
