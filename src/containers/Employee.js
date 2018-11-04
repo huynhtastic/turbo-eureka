@@ -10,13 +10,33 @@ export default class Employee extends Component {
     super(props);
 
     this.state = {
-      currentBalance: 0,
-      kudosBalance: 0,
+      receivedBalance: 0,
+      giveableBalance: 0,
     }
   }
 
+  componentDidMount() {
+    console.log('asdf');
+    fetch(`http://localhost:3001/api/balances/${cookies.get('emp_id')}`)
+      .then((res) => {
+        if (res.status === 404) {
+          alert('This employee does not exist');
+          return {};
+        } else {
+          return res.json();
+        }
+      })
+      .then((json) => {
+        console.log(json);
+        this.setState({
+          receivedBalance: json.POINTS_RECEIVED,
+          giveableBalance: json.POINTS_GIVEABLE,
+        });
+        console.log(this.state);
+      });
+  }
+
   render() {
-    console.log(cookies.get('emp_id'));
     return (
       <div className="Employee">
         <form onSubmit={this.handleSubmit}>
@@ -24,7 +44,7 @@ export default class Employee extends Component {
             <ControlLabel>Current Balance</ControlLabel>
             <FormControl
               type="number"
-              value={this.state.currentBalance}
+              value={this.state.receivedBalance}
               readOnly="readonly"
             />
           </FormGroup>
@@ -32,7 +52,7 @@ export default class Employee extends Component {
             <ControlLabel>Kudos Balance</ControlLabel>
             <FormControl
               type="number"
-              value={this.state.kudosBalance}
+              value={this.state.giveableBalance}
               readOnly="readonly"
             />
           </FormGroup>
