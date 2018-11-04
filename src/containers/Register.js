@@ -56,14 +56,9 @@ export default class Register extends Component {
           alert('Registration Unsuccessful');
           return;
         } else {
-          return res.json();
-        }
-      })
-      .then((json) => {
-        if (json) {
           this.setState({ redirect: true });
         }
-      });
+      })
   }
 
   render() {
