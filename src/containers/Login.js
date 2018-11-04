@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import Cookies from 'universal-cookie';
+import { Redirect } from 'react-router-dom';
 import fetch from 'node-fetch';
 import "./Login.css";
 
@@ -10,6 +12,7 @@ export default class Login extends Component {
     this.state = {
       username: "",
       password: "",
+      redirect: false,
     };
   }
 
@@ -21,27 +24,59 @@ export default class Login extends Component {
     this.setState({
       [event.target.id]: event.target.value
     });
-    console.log(this.state.username);
-    console.log(this.state.password);
   }
 
   handleSubmit = event => {
     event.preventDefault();
-    const login = this.state;
-    const { history } = this.props;
+    const login = {
+      username: this.state.username,
+      password: this.state.password,
+    };
 
     this.setState({ error: false });
-    const loginResult = fetch('http://localhost:3001/api/login', {
+    fetch('http://localhost:3001/api/login', {
       method: 'POST',
       body:   JSON.stringify(login),
       headers: { 'Content-Type': 'application/json' },
     })
-    .then(res => res.json())
-    .then(json => console.log(json));
+    // TODO: change alerts to bootstrap alerts
+      .then((res) => {
+        if (res.status === 404) {
+          alert('Invalid Credentials');
+          return {};
+        } else {
+          return res.json();
+        }
+      })
+      .then((json) => {
+        this.setCookie(json);
+      });
+  }
 
+  setCookie = (json) => {
+    const cookies = new Cookies();
+    console.log(json);
+
+    let d = new Date();
+    d.setTime(d.getTime() + 60*10000);
+    cookies.set('emp_id', json.EMP_ID, {
+      path: '/',
+      expires: d,
+    });
+    cookies.set('admin', json.ADMIN, {
+      path: '/',
+      expires: d,
+    });
+    this.setState({ redirect: true });
   }
 
   render() {
+    const { redirect } = this.state;
+
+    if (redirect ) {
+      return <Redirect to='/employee'/ >;
+    }
+
     return (
       <div className="Login">
         <form onSubmit={this.handleSubmit}>

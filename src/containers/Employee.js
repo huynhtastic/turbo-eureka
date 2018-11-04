@@ -1,6 +1,9 @@
 import React, { Component } from "react";
+import Cookies from 'universal-cookie';
 import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import "./Employee.css";
+
+const cookies = new Cookies();
 
 export default class Employee extends Component {
   constructor(props) {
@@ -8,20 +11,21 @@ export default class Employee extends Component {
 
     this.state = {
       currentBalance: 0,
-      kudosBalance: 0
+      kudosBalance: 0,
     }
   }
 
   render() {
+    console.log(cookies.get('emp_id'));
     return (
       <div className="Employee">
-        <form onsubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit}>
           <FormGroup controlId="current" bsSize="large">
             <ControlLabel>Current Balance</ControlLabel>
             <FormControl
               type="number"
               value={this.state.currentBalance}
-              readonly="readonly"
+              readOnly="readonly"
             />
           </FormGroup>
           <FormGroup controlId="kudos" bsSize="large">
@@ -29,7 +33,7 @@ export default class Employee extends Component {
             <FormControl
               type="number"
               value={this.state.kudosBalance}
-              readonly="readonly"
+              readOnly="readonly"
             />
           </FormGroup>
         </form>
