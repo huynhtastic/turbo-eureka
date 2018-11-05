@@ -33,8 +33,25 @@ export default class Employee extends Component {
     });
   }
 
-  handleSubmit(event) {
+  handleSubmit = (event) => {
     event.preventDefault();
+    const dt = datetime.create();
+
+    const transaction = {
+      sender_id: cookies.get('emp_id'),
+      recipient_username: this.state.recipient,
+      amount: this.state.amount,
+      txn_date: dt.format('Y-m-d H:M:S')
+    }
+
+    console.log(transaction);
+
+    fetch(`${env.apiUrl}/api/balances`, {
+      method: 'POST',
+      body:   JSON.stringify(transaction),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
   }
 
   populateEmployees() {
