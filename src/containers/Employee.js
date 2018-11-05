@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import Cookies from 'universal-cookie';
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import datetime from 'node-datetime';
 import fetch from 'node-fetch';
+import env from '../env.js';
 import "./Employee.css";
 
 const cookies = new Cookies();
@@ -14,13 +16,15 @@ export default class Employee extends Component {
       receivedBalance: 0,
       giveableBalance: 0,
       recipient: "",
-      amount: 1,
+      amount: 0,
       giveableEmployees: undefined,
     }
   }
 
   validateForm() {
-    return this.state.recipient === "";
+    return this.state.recipient !== "" &&
+      this.state.amount > 0 &&
+      this.state.giveableBalance >= this.state.amount;
   }
 
   handleChange = (event) => {
@@ -44,7 +48,7 @@ export default class Employee extends Component {
   }
 
   componentDidMount() {
-    fetch(`http://localhost:3001/api/balances/${cookies.get('emp_id')}`)
+    fetch(`${env.apiUrl}/api/balances/${cookies.get('emp_id')}`)
       .then((res) => {
         if (res.status === 404) {
           alert('This employee does not exist');
@@ -59,7 +63,7 @@ export default class Employee extends Component {
           giveableBalance: json.POINTS_GIVEABLE,
         });
       });
-    fetch(`http://localhost:3001/api/employees/${cookies.get('emp_id')}`)
+    fetch(`${env.apiUrl}/api/employees/${cookies.get('emp_id')}`)
       .then((res) => {
         if (res.status === 404) {
           return {};
@@ -68,8 +72,12 @@ export default class Employee extends Component {
         }
       })
       .then((json) => {
-        console.log(json);
         this.setState({giveableEmployees: json});
+        if (this.state.recipient === "") {
+          this.setState({
+            recipient: json[0].USERNAME,
+          });
+        }
       });
   }
 
@@ -106,7 +114,8 @@ export default class Employee extends Component {
           <FormGroup controlId="amount" bsSize="large">
             <ControlLabel>Give amount:</ControlLabel>
             <FormControl
-              min="1"
+              min="0"
+              max={this.state.giveableBalance}
               type="number"
               onChange={this.handleChange}
               value={this.state.amount}
