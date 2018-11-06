@@ -50,7 +50,14 @@ export default class Employee extends Component {
       method: 'POST',
       body:   JSON.stringify(transaction),
       headers: { 'Content-Type': 'application/json' },
-    });
+    })
+      .then((res) => {
+        if (res.status === 404) {
+          alert('Transaction failed');
+        } else {
+          window.location.reload()
+        }
+      });
 
   }
 
