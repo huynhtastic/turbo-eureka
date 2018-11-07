@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Cookies from 'universal-cookie';
-import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { Button, FormGroup, FormControl, ControlLabel, ListGroup, ListGroupItem } from "react-bootstrap";
 import datetime from 'node-datetime';
 import fetch from 'node-fetch';
 import env from '../env.js';
@@ -19,6 +19,7 @@ export default class Employee extends Component {
       amount: 0,
       message: "",
       giveableEmployees: undefined,
+      receivedMessages: undefined,
     }
   }
 
@@ -72,6 +73,14 @@ export default class Employee extends Component {
     }
   }
 
+  populateMessages() {
+    if (this.state.receivedMessages) {
+      return this.state.receivedMessages.map((msg) =>
+        <ListGroupItem>{msg.AMOUNT} from {msg.USERNAME}: {msg.MESSAGE}</ListGroupItem>
+      );
+    }
+  }
+
   componentDidMount() {
     fetch(`${env.apiUrl}/api/balances/${cookies.get('emp_id')}`)
       .then((res) => {
@@ -104,12 +113,32 @@ export default class Employee extends Component {
           });
         }
       });
+    fetch(`${env.apiUrl}/api/transactions/${cookies.get('emp_id')}`)
+      .then((res) => {
+        if (res.status === 404) {
+          return {};
+        } else {
+          return res.json();
+        }
+      })
+      .then((json) => {
+        console.log(json);
+        if (Object.keys(json).length !== 0 || json.length !== 0) {
+          this.setState({receivedMessages: json});
+        }
+      });
   }
 
   render() {
     return (
       <div className="Employee">
         <form onSubmit={this.handleSubmit}>
+          <FormGroup controlId="receviedMessages" bsSize="small">
+            <ControlLabel>Received Transactions</ControlLabel>
+            <ListGroup>
+              {this.populateMessages()}
+            </ListGroup>
+          </FormGroup>
           <FormGroup controlId="current" bsSize="large">
             <ControlLabel>Received Balance</ControlLabel>
             <FormControl
