@@ -19,7 +19,7 @@ export default class Employee extends Component {
       amount: 0,
       message: "",
       giveableEmployees: undefined,
-      receivedMessages: undefined,
+      txnLogs: undefined,
     }
   }
 
@@ -47,8 +47,6 @@ export default class Employee extends Component {
       message: this.state.message,
     }
 
-    console.log(transaction);
-
     fetch(`${env.apiUrl}/api/balances`, {
       method: 'POST',
       body:   JSON.stringify(transaction),
@@ -73,10 +71,22 @@ export default class Employee extends Component {
     }
   }
 
-  populateMessages() {
-    if (this.state.receivedMessages) {
-      return this.state.receivedMessages.map((msg) =>
-        <ListGroupItem>{msg.AMOUNT} from {msg.USERNAME}: {msg.MESSAGE}</ListGroupItem>
+  populateLogs() {
+    if (this.state.txnLogs) {
+      return this.state.txnLogs.map((txn) => {
+        var dt = datetime.create(txn.TXN_DATE);
+        const ts = dt.format('m/d/y H:M:S');
+        var msg = ''
+        if (txn.RECIPIENT_ID === null) {
+          msg = '';
+        } else if (txn.SENDER_ID === parseInt(cookies.get('emp_id'))) {
+          msg = `to ${txn.RECIPIENT}`;
+        } else {
+          msg = `from ${txn.SENDER}`;
+        }
+
+        return <ListGroupItem key={txn.TXN_ID}>{ts} {txn.AMOUNT} <b>{msg}</b>: {txn.MESSAGE}</ListGroupItem>
+      }
       );
     }
   }
@@ -124,7 +134,7 @@ export default class Employee extends Component {
       .then((json) => {
         console.log(json);
         if (Object.keys(json).length !== 0 || json.length !== 0) {
-          this.setState({receivedMessages: json});
+          this.setState({txnLogs: json});
         }
       });
   }
@@ -133,10 +143,10 @@ export default class Employee extends Component {
     return (
       <div className="Employee">
         <form onSubmit={this.handleSubmit}>
-          <FormGroup controlId="receviedMessages" bsSize="small">
-            <ControlLabel>Received Transactions</ControlLabel>
+          <FormGroup controlId="txnLog" bsSize="small">
+            <ControlLabel>Transaction Log</ControlLabel>
             <ListGroup>
-              {this.populateMessages()}
+              {this.populateLogs()}
             </ListGroup>
           </FormGroup>
           <FormGroup controlId="current" bsSize="large">
