@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Checkbox, Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import fetch from 'node-fetch';
+import env from '../env.js';
 import './Register.css';
 
 export default class Register extends Component {
@@ -45,7 +46,7 @@ export default class Register extends Component {
     delete registration.redirect;
 
     this.setState({ error: false });
-    fetch('http://localhost:3001/api/register', {
+    fetch(`${env.apiUrl}/api/register`, {
       method: 'POST',
       body:   JSON.stringify(registration),
       headers: { 'Content-Type': 'application/json' },
