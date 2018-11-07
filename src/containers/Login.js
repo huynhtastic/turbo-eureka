@@ -67,14 +67,16 @@ export default class Login extends Component {
       path: '/',
       expires: d,
     });
-    this.setState({ redirect: true });
+    this.setState({ redirect: json.ADMIN });
   }
 
   render() {
     const { redirect } = this.state;
 
-    if (redirect) {
-      return <Redirect to='/employee'/ >;
+    if (redirect === 0) {
+      return <Redirect to='/employee' />;
+    } else if (redirect === 1) {
+      return <Redirect to='/admin' />;
     }
 
     return (

@@ -18,6 +18,9 @@ render() {
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav pullRight>
+            <LinkContainer to="/admin">
+              <NavItem>Admin</NavItem>
+            </LinkContainer>
             <LinkContainer to="/employee">
               <NavItem>Employee</NavItem>
             </LinkContainer>

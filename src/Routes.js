@@ -1,6 +1,7 @@
 import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Cookies from 'universal-cookie';
+import Admin from "./containers/Admin";
 import Home from "./containers/Home";
 import Employee from "./containers/Employee";
 import Login from "./containers/Login";
@@ -25,6 +26,13 @@ export default () =>
     <Route path="/employee" exact render={() => (
       isEmployee() ? (
         <Employee />
+      ) : (
+        <Redirect to="/login" />
+      )
+    )} />
+    <Route path="/admin" exact render={() => (
+      isAdmin() ? (
+        <Admin />
       ) : (
         <Redirect to="/login" />
       )
