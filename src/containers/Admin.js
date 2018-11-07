@@ -13,6 +13,7 @@ export default class Login extends Component {
     this.state = {
       reportOne: undefined,
       reportTwo: undefined,
+      reportThree: undefined,
     };
   }
 
@@ -32,6 +33,13 @@ export default class Login extends Component {
     }
   }
 
+  populateReportThree() {
+    if (this.state.reportThree) {
+      return this.state.reportThree.map((i) =>
+        <ListGroupItem readOnly="readonly">Month {i.MONTH}: {i.USERNAME} {i.REDEMPTION_COUNT} Redemptions</ListGroupItem>
+      );
+    }
+  }
   componentDidMount() {
     fetch(`${env.apiUrl}/api/reports/1`)
       .then((res) => {
@@ -61,6 +69,20 @@ export default class Login extends Component {
           reportTwo: json,
         });
       });
+    fetch(`${env.apiUrl}/api/reports/3`)
+      .then((res) => {
+        if (res.status === 404) {
+          alert('Error loading report 3');
+          return {};
+        } else {
+          return res.json();
+        }
+      })
+      .then((json) => {
+        this.setState({
+          reportThree: json,
+        });
+      });
   }
 
   render() {
@@ -73,6 +95,10 @@ export default class Login extends Component {
         <h2>Report 2: Employees With Points Left To Give</h2>
         <ListGroup>
           {this.populateReportTwo()}
+        </ListGroup>
+        <h2>Report 3: Employee Redemption For Past 2 Months (+ Current Month)</h2>
+        <ListGroup>
+          {this.populateReportThree()}
         </ListGroup>
         <form onSubmit={this.handleSubmit}>
           <Button
