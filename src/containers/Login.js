@@ -3,6 +3,7 @@ import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import Cookies from 'universal-cookie';
 import { Redirect } from 'react-router-dom';
 import fetch from 'node-fetch';
+import env from '../env.js';
 import "./Login.css";
 
 export default class Login extends Component {
@@ -34,7 +35,7 @@ export default class Login extends Component {
     };
 
     this.setState({ error: false });
-    fetch('http://localhost:3001/api/login', {
+    fetch(`${env.apiUrl}/api/login`, {
       method: 'POST',
       body:   JSON.stringify(login),
       headers: { 'Content-Type': 'application/json' },

@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import { Button, FormGroup, FormControl, ControlLabel, ListGroup, ListGroupItem } from "react-bootstrap";
-import Cookies from 'universal-cookie';
-import { Redirect } from 'react-router-dom';
+import { Button, ListGroup, ListGroupItem } from "react-bootstrap";
 import fetch from 'node-fetch';
 import env from '../env.js';
 import "./Admin.css";
