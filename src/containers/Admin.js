@@ -12,14 +12,22 @@ export default class Login extends Component {
 
     this.state = {
       reportOne: undefined,
+      reportTwo: undefined,
     };
   }
 
   populateReportOne() {
-    console.log(this.state.reportOne);
     if (this.state.reportOne) {
       return this.state.reportOne.map((i) =>
         <ListGroupItem readOnly="readonly">{i.MONTH}/{i.YEAR} {i.RANK}. {i.USERNAME}: Gave {i.GIFT} and Redeemed {i.REDEEM}</ListGroupItem>
+      );
+    }
+  }
+
+  populateReportTwo() {
+    if (this.state.reportTwo) {
+      return this.state.reportTwo.map((i) =>
+        <ListGroupItem readOnly="readonly">{i.USERNAME}: {i.POINTS_GIVEABLE} Points</ListGroupItem>
       );
     }
   }
@@ -39,6 +47,20 @@ export default class Login extends Component {
           reportOne: json,
         });
       });
+    fetch(`${env.apiUrl}/api/reports/2`)
+      .then((res) => {
+        if (res.status === 404) {
+          alert('Error loading report 2');
+          return {};
+        } else {
+          return res.json();
+        }
+      })
+      .then((json) => {
+        this.setState({
+          reportTwo: json,
+        });
+      });
   }
 
   render() {
@@ -47,6 +69,10 @@ export default class Login extends Component {
         <h2>Report 1: Monthly Report of Employee Kudos</h2>
         <ListGroup>
           {this.populateReportOne()}
+        </ListGroup>
+        <h2>Report 2: Employees With Points Left To Give</h2>
+        <ListGroup>
+          {this.populateReportTwo()}
         </ListGroup>
         <form onSubmit={this.handleSubmit}>
           <Button
