@@ -40,6 +40,7 @@ export default class Login extends Component {
       );
     }
   }
+
   componentDidMount() {
     fetch(`${env.apiUrl}/api/reports/1`)
       .then((res) => {
@@ -82,6 +83,26 @@ export default class Login extends Component {
         this.setState({
           reportThree: json,
         });
+      });
+  }
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+
+    const payload = {
+      flag: 'reset',
+    }
+
+    fetch(`${env.apiUrl}/api/balances`, {
+      method: 'POST',
+      body:   JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          alert('Reset failed');
+        }
+        window.location.reload()
       });
   }
 
