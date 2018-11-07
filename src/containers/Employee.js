@@ -14,6 +14,7 @@ export default class Employee extends Component {
 
     this.state = {
       receivedBalance: 0,
+      giftCards: 0,
       giveableBalance: 0,
       recipient: "",
       amount: 0,
@@ -29,10 +30,32 @@ export default class Employee extends Component {
       this.state.giveableBalance >= this.state.amount;
   }
 
+  validateRedeem = () => {
+    return this.state.receivedBalance >= 10000;
+  }
+
   handleChange = (event) => {
     this.setState({
       [event.target.id]: event.target.value
     });
+  }
+
+  handleRedeem = (event) => {
+    event.preventDefault();
+    const giftCard = {
+      emp_id: cookies.get('emp_id')
+    };
+    fetch(`${env.apiUrl}/api/transactions`, {
+      method: 'POST',
+      body:   JSON.stringify(giftCard),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          alert('Transaction failed');
+        }
+        window.location.reload()
+      });
   }
 
   handleSubmit = (event) => {
@@ -45,7 +68,7 @@ export default class Employee extends Component {
       amount: this.state.amount,
       txn_date: dt.format('Y-m-d H:M:S'),
       message: this.state.message,
-    }
+    };
 
     console.log(transaction);
 
@@ -94,6 +117,7 @@ export default class Employee extends Component {
       .then((json) => {
         this.setState({
           receivedBalance: json.POINTS_RECEIVED,
+          giftCards: json.GIFT_CARDS,
           giveableBalance: json.POINTS_GIVEABLE,
         });
       });
@@ -132,7 +156,7 @@ export default class Employee extends Component {
   render() {
     return (
       <div className="Employee">
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleRedeem}>
           <FormGroup controlId="receviedMessages" bsSize="small">
             <ControlLabel>Received Transactions</ControlLabel>
             <ListGroup>
@@ -147,6 +171,24 @@ export default class Employee extends Component {
               readOnly="readonly"
             />
           </FormGroup>
+          <FormGroup controlId="giftcards" bsSize="large">
+            <ControlLabel>$100 Gift Cards Redeemed</ControlLabel>
+            <FormControl
+              type="number"
+              value={this.state.giftCards}
+              readOnly="readonly"
+            />
+          </FormGroup>
+          <Button
+            block
+            bsSize="large"
+            disabled={!this.validateRedeem()}
+            type="submit"
+          >
+            Redeem Gift Card for 10,000 Points
+          </Button>
+        </form>
+        <form onSubmit={this.handleSubmit}>
           <FormGroup controlId="giveable" bsSize="large">
             <ControlLabel>Giveable Balance</ControlLabel>
             <FormControl
