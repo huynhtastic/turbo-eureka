@@ -17,6 +17,7 @@ export default class Employee extends Component {
       giveableBalance: 0,
       recipient: "",
       amount: 0,
+      message: "",
       giveableEmployees: undefined,
     }
   }
@@ -41,7 +42,8 @@ export default class Employee extends Component {
       sender_id: cookies.get('emp_id'),
       recipient_username: this.state.recipient,
       amount: this.state.amount,
-      txn_date: dt.format('Y-m-d H:M:S')
+      txn_date: dt.format('Y-m-d H:M:S'),
+      message: this.state.message,
     }
 
     console.log(transaction);
@@ -52,11 +54,10 @@ export default class Employee extends Component {
       headers: { 'Content-Type': 'application/json' },
     })
       .then((res) => {
-        if (res.status === 404) {
+        if (res.status !== 200) {
           alert('Transaction failed');
-        } else {
-          window.location.reload()
         }
+        window.location.reload()
       });
 
   }
@@ -143,6 +144,14 @@ export default class Employee extends Component {
               type="number"
               onChange={this.handleChange}
               value={this.state.amount}
+            />
+          </FormGroup>
+          <FormGroup controlId="message" bsSize="large">
+            <ControlLabel>Message:</ControlLabel>
+            <FormControl
+              type="text"
+              value={this.state.message}
+              onChange={this.handleChange}
             />
           </FormGroup>
           <Button
